@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日檢點表</title>
+    <!-- 引入 Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">車輛駕駛人每日檢點表</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                             <a class="nav-link text-dark" href="檢視.html">檢視</a> 
+                        </li>                       
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="container-fluid p-3">
+                <!-- 基本資料區 -->
+                <div class="card mb-3">
+                    <div class="card-header">基本資料</div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">檢查人員</label>
+                                <input type="text" class="form-control" value="ZM1XXX 陳XX" readonly>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">檢查單位</label>
+                                <input type="text" class="form-control" value="網路事業組織 > 經營規劃部" readonly>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">初檢日期</label>
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">最後異動日期</label>
+                                <input type="datetime-local" class="form-control" readonly>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">檢查日期 <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">車號 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="請輸入車號" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">工作項目</label>
+                                <select class="form-select">
+                                    <option selected>查修作業</option>
+                                    <option>搬運作業</option>
+                                    <option>日常檢查</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速勾選區 -->
+                <div class="card mb-3">
+                    <div class="card-header">快速勾選</div>
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="noCheck">
+                            <label class="form-check-label" for="noCheck">本日無需檢點</label>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="supplement">
+                            <label class="form-check-label" for="supplement">補填原因</label>
+                        </div>
+                        <input type="text" class="form-control mt-2" placeholder="請輸入原因...">
+                        <label class="form-label mt-3">上傳檔案</label>
+                        <input type="file" class="form-control">
+                    </div>
+                </div>
+
+                <!-- 檢查項目列表（用 JS 動態渲染） -->
+                <div id="check-items"></div>
+
+                <!-- 檢查項目資料與渲染腳本 -->
+                <script>
+                    const items = [
+                      { id: 1, title: "照後鏡角度是否正常。" },
+                      { id: 2, title: "輪胎胎壓、胎面是否正常：胎紋深度是否未磨耗至胎面磨耗指示點。" },
+                      { id: 3, title: "工具材料（工作梯、梯架、氣瓶、瓦斯桶、滅火器、輪擋等）是否固定妥善。" },
+                      { id: 4, title: "排檔（離合器）動作是否正常。" }
+                    ];
+
+                    const container = document.getElementById('check-items');
+                    items.forEach(item => {
+                      const html = `
+                        <div class="card mb-3">
+                          <div class="card-header">檢查項目</div>
+                          <div class="card-body">
+                            <p class="fw-bold">${item.title}</p>
+                            <div class="btn-group w-100 mb-3" role="group">
+                              <input type="radio" class="btn-check" name="check${item.id}" id="check${item.id}-ok" autocomplete="off" onclick="toggleTextarea('check${item.id}', false)">
+                              <label class="btn btn-outline-success" for="check${item.id}-ok">良</label>
+
+                              <input type="radio" class="btn-check" name="check${item.id}" id="check${item.id}-bad" autocomplete="off" onclick="toggleTextarea('check${item.id}', true)">
+                              <label class="btn btn-outline-danger" for="check${item.id}-bad">不良</label>
+
+                              <input type="radio" class="btn-check" name="check${item.id}" id="check${item.id}-na" autocomplete="off" onclick="toggleTextarea('check${item.id}', false)">
+                              <label class="btn btn-outline-secondary" for="check${item.id}-na">不適用</label>
+                            </div>
+
+                            <label class="form-label">不良情形及改善措施</label>
+                            <textarea id="text-check${item.id}" class="form-control mb-3" rows="3" placeholder="若選不良請填寫..." disabled></textarea>
+
+                            <label class="form-label">上傳檔案</label>
+                            <input type="file" class="form-control mb-3">
+
+                            <p class="fw-bold mt-4">修復結果</p>
+                            <div class="btn-group w-100 mb-3" role="group">
+                              <input type="radio" class="btn-check" name="fix${item.id}" id="fix${item.id}-ok" autocomplete="off">
+                              <label class="btn btn-outline-primary" for="fix${item.id}-ok">修復</label>
+
+                              <input type="radio" class="btn-check" name="fix${item.id}" id="fix${item.id}-nofix" autocomplete="off">
+                              <label class="btn btn-outline-warning" for="fix${item.id}-nofix">未修復</label>
+
+                              <input type="radio" class="btn-check" name="fix${item.id}" id="fix${item.id}-na" autocomplete="off">
+                              <label class="btn btn-outline-secondary" for="fix${item.id}-na">不適用</label>
+                            </div>
+
+                            <label class="form-label">修復情形與改善措施</label>
+                            <textarea class="form-control" rows="3" placeholder="修復說明..."></textarea>
+
+                            <label class="form-label mt-2">上傳檔案</label>
+                            <input type="file" class="form-control">
+                          </div>
+                        </div>
+                      `;
+                      container.insertAdjacentHTML('beforeend', html);
+                    });
+
+                    function toggleTextarea(id, show) {
+                      const el = document.getElementById(`text-${id}`);
+                      if (el) el.disabled = !show;
+                    }
+                </script>
+            </div>
+			<a class="btn btn-success" href="檢視.html">檢視</a>
+        </main>		
+    </div>
+	
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - NetworkForm_App - Privacy
+        </div>
+    </footer>
+    
+    <!-- 引入 Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
